@@ -16,7 +16,7 @@ import matplotlib.mlab as mlab
 from scipy.stats import norm
 
 # Generate Nevents
-Nevents = 5000
+Nevents = 5
 # Allocate Qvalue energy to each
 Qvalue = 2995e3
 #Qvalue =26934.61795 #test from orig. output
@@ -222,9 +222,15 @@ for i in range (1,Nevents):
     AllEs.append(ALLE)
     AllNs.append(ALLN)
 
-    # print "............ Visible E = " + str(VisibleE) + " - that is"+str(VisibleE/evt_energy)+ " - that is  " + str(VisibleE/Qvalue)
+    for mIdx, m in enumerate(evt_modes):
+        print " N_" + str(mIdx) + ": true = " + str(m.fracN)+", sim = " + str(m.accumulatedN/ALLN)
+
+    for mIdx, m in enumerate(evt_modes):
+        print " E_" + str(mIdx) + ": true = " + str(m.probThisModeE)+", sim = " + str(m.accumulatedE/ALLE)
+
 
     print "............ Visible N = " + str(VisibleN) + " - that is  "+str(VisibleN/ALLN)
+    print "............ Visible E = " + str(VisibleE) + " - that is " +str(VisibleE/evt_energy) + " ALLE = " + str(ALLE) + ", evt_energy = " + str(evt_energy)
 
 # #########################################
 # # ploting
