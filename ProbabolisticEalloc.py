@@ -16,10 +16,10 @@ import matplotlib.mlab as mlab
 from scipy.stats import norm
 
 # Generate Nevents
-Nevents = 5
+Nevents = 1000
 # Allocate Qvalue energy to each
-Qvalue = 2995e3
-#Qvalue =26934.61795 #test from orig. output
+#Qvalue = 2995e3
+Qvalue =26934.61795 #test from orig. output
 
 verb = 0 # TODO: learn true/false syntax in python
 
@@ -245,7 +245,7 @@ for i in range (1,Nevents):
 plt.ioff()
 
 probdist = np.array(probdist)
-np.savetxt('numpy_flatprob.txt', probdist, fmt='%f')
+np.savetxt('out/numpy_flatprob.txt', probdist, fmt='%f')
 
 
 bin = np.linspace(0,1,Nevents)
@@ -282,20 +282,20 @@ print "Ns[]"
 print AllVisibleNs
 
 
-np.savetxt('numpy_EvtTotalVisE.txt', AllVisibleEs, fmt='%f')
+np.savetxt('out/numpy_EvtTotalVisE.txt', AllVisibleEs, fmt='%f')
 binEs = np.linspace(AllVisibleEs[1]*0.995, AllVisibleEs[1]*1.005, 100)
 Es = plt
 Es.title(r'$\mathrm{Histogram\ of\ E total:}\ \mu=%.3f,\ \sigma=%.3f,\ \delta E/E=%.5f$' %(muEs, sigmaEs, sigmaEs/muEs))
 Es.hist(AllVisibleEs, binEs, alpha=0.5, label='Total E', color='hotpink')
 Es.legend(loc='upper right')
 Es.show()
+#
+# # fig = Es.figure()
+# # fig.savefig("E_%s.png"%date)
+# # Es.close(fig)
 
-# fig = Es.figure()
-# fig.savefig("E_%s.png"%date)
-# Es.close(fig)
 
-
-np.savetxt('numpy_EvtTotalVisN.txt', AllVisibleNs, fmt='%f')
+np.savetxt('out/numpy_EvtTotalVisN.txt', AllVisibleNs, fmt='%f')
 binNs = np.linspace(AllVisibleNs[1]*0.95, AllVisibleNs[1]*1.05, 100)
 Ns = plt
 Ns.title(r'$\mathrm{Histogram\ of\ N total:}\ \mu=%.3f,\ \sigma=%.3f,\ \delta N/N=%.5f, F=%.3f$' %(muNs, sigmaNs, sigmaNs/muNs, (sigmaNs*sigmaNs/muNs)))
