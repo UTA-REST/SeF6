@@ -21,6 +21,8 @@ Nevents = 5
 Qvalue = 2995e3
 #Qvalue =26934.61795 #test from orig. output
 
+verb = 0 # TODO: learn true/false syntax in python
+
 ## The following info is available for each mode:
 #    name, shortname, Eloss, avgQuanta, fraction of N I calculated
 
@@ -222,15 +224,19 @@ for i in range (1,Nevents):
     AllEs.append(ALLE)
     AllNs.append(ALLN)
 
-    for mIdx, m in enumerate(evt_modes):
-        print " N_" + str(mIdx) + ": true = " + str(m.fracN)+", sim = " + str(m.accumulatedN/ALLN)
+    if verb:
+        for mIdx, m in enumerate(evt_modes):
+            print " N_" + str(mIdx) + ": true = " + str(m.fracN)+", sim = " + str(m.accumulatedN/ALLN)
 
-    for mIdx, m in enumerate(evt_modes):
-        print " E_" + str(mIdx) + ": true = " + str(m.probThisModeE)+", sim = " + str(m.accumulatedE/ALLE)
+            for mIdx, m in enumerate(evt_modes):
+                print " E_" + str(mIdx) + ": true = " + str(m.probThisModeE)+", sim = " + str(m.accumulatedE/ALLE)
 
 
-    print "............ Visible N = " + str(VisibleN) + " - that is  "+str(VisibleN/ALLN)
-    print "............ Visible E = " + str(VisibleE) + " - that is " +str(VisibleE/evt_energy) + " ALLE = " + str(ALLE) + ", evt_energy = " + str(evt_energy)
+            print "............ Visible N = " + str(VisibleN) + \
+            " - that is  "+str(VisibleN/ALLN)
+            print "............ Visible E = " + str(VisibleE) + \
+            " - that is " +str(VisibleE/evt_energy) + " ALLE = " +\
+             str(ALLE) + ", evt_energy = " + str(evt_energy)
 
 # #########################################
 # # ploting
@@ -297,3 +303,23 @@ Ns.show()
 # Ns.close(fig)
 
 print str(muEs)+", "+str(sigmaEs)+", "+str(muNs)+", "+str(sigmaNs)+", F= "+str(sigmaNs*sigmaNs/muNs)
+
+#########################################
+# Plot Ns in fractions of N1
+#########################################
+
+(muN0s, sigmaN0s) = norm.fit(AllEventModes[0].ALLaccumulatedN)
+(muE0s, sigmaE0s) = norm.fit(AllEventModes[0].ALLaccumulatedE)
+for mIdx, ALLm in enumerate(AllEventModes):
+    if mIdx < VisibleEstates:
+        AllNIsNormalized = ( ALLm.ALLaccumulatedN )/muN0s
+        AllEIsNormalized = ( ALLm.ALLaccumulatedE )/muE0s
+
+        (muNis, sigmaNis) = norm.fit(AllNIsNormalized)
+
+        binNi = np.linspace(0, 2, 300)
+        Sig = plt
+        Sig.title(r'$\mathrm{Histogram\ of\ N \mu=%.3f \ total:}\ \mu=%.3f,\ \sigma=%.3f,\ \delta N/N=%.5f, F=%.3f$' %(mIdx, muNis, sigmaNis, sigmaNis/muNis, (sigmaNis*sigmaNis/muNis)))
+        Sig.hist(AllNIsNormalized, binNi, alpha=0.5, label='N/N_0 for this mode', color='gray')
+        Sig.legend(loc='upper right')
+        Sig.show()
