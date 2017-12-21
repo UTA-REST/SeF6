@@ -18,11 +18,11 @@ from scipy.stats import norm
 # Generate Nevents
 Nevents = 5000
 # Allocate Qvalue energy to each
-#Qvalue = 2995e3
+Qvalue = 2995e3
+#Qvalue =26934.61795 #test from orig. output
 
-Qvalue =26934.61795
 ## The following info is available for each mode:
-#    name, shortname, Eloss, avgQuanta, visible?
+#    name, shortname, Eloss, avgQuanta, fraction of N I calculated
 
 class modeinfo:
     def __init__(self,name,shortname,Eloss,avgQuanta,fracN):
@@ -121,7 +121,7 @@ def define_modes(globalvar):
         m.probThisModeE  = m.avgEnergy / TOTALavgE_ALL
 
         m.probCutHigh     = ProbCutoff
-#        m.probCutLow      = ProbCutoff - m.probThisModeN
+#        m.probCutLow      = ProbCutoff - m.probThisModeN # Same as fracN :)
         m.probCutLow      = ProbCutoff - m.fracN
         ProbCutoff        = m.probCutLow
 
@@ -165,7 +165,6 @@ for j in range (1,Nevents):
     prob = np.random.random()
     probdist.append(prob)
 
-# TODO: Will plot prob later...
 
 print "Making " + str(Nevents) + "events..."
 
@@ -238,16 +237,19 @@ probdist = np.array(probdist)
 bin = np.linspace(0,1,Nevents)
 plt.hist(probdist, bin)
 plt.title("If this is flat you're ok ... now close this with the x")
-#plt.show()
+plt.show()
+
 
 import datetime
 today = datetime.date.today()
 date = today.strftime('%Y-%m-%d-%H-%M-%S')
 #f"{datetime.datetime.now():%Y-%m-%d-%H-%M-%S}"
+# TODO get time to work... now printing 00-00-00
 
-fig = plt.figure()
-fig.savefig("prob_%s.png"%date)
-plt.close(fig)
+# pngs are empty :(, TODO fix them
+# fig = plt.figure()
+# fig.savefig("prob_%s.png"%date)
+# plt.close(fig)
 
 
 ##############################################
@@ -270,11 +272,11 @@ Es = plt
 Es.title(r'$\mathrm{Histogram\ of\ E total:}\ \mu=%.3f,\ \sigma=%.3f,\ \delta E/E=%.5f$' %(muEs, sigmaEs, sigmaEs/muEs))
 Es.hist(AllVisibleEs, binEs, alpha=0.5, label='Total E', color='hotpink')
 Es.legend(loc='upper right')
-#Es.show()
+Es.show()
 
-fig = Es.figure()
-fig.savefig("E_%s.png"%date)
-Es.close(fig)
+# fig = Es.figure()
+# fig.savefig("E_%s.png"%date)
+# Es.close(fig)
 
 
 binNs = np.linspace(AllVisibleNs[1]*0.95, AllVisibleNs[1]*1.05, 100)
@@ -282,10 +284,10 @@ Ns = plt
 Ns.title(r'$\mathrm{Histogram\ of\ N total:}\ \mu=%.3f,\ \sigma=%.3f,\ \delta N/N=%.5f, F=%.3f$' %(muNs, sigmaNs, sigmaNs/muNs, (sigmaNs*sigmaNs/muNs)))
 Ns.hist(AllVisibleNs, binNs, alpha=0.5, label='Total N', color='hotpink')
 Ns.legend(loc='upper right')
-#Ns.show()
+Ns.show()
 
-fig = Ns.figure()
-fig.savefig("N_%s.png"%date)
-Ns.close(fig)
+# fig = Ns.figure()
+# fig.savefig("N_%s.png"%date)
+# Ns.close(fig)
 
 print str(muEs)+", "+str(sigmaEs)+", "+str(muNs)+", "+str(sigmaNs)+", F= "+str(sigmaNs*sigmaNs/muNs)
