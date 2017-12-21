@@ -245,6 +245,8 @@ for i in range (1,Nevents):
 plt.ioff()
 
 probdist = np.array(probdist)
+np.savetxt('numpy_flatprob.txt', probdist, fmt='%f')
+
 
 bin = np.linspace(0,1,Nevents)
 plt.hist(probdist, bin)
@@ -279,6 +281,8 @@ print AllVisibleEs
 print "Ns[]"
 print AllVisibleNs
 
+
+np.savetxt('numpy_EvtTotalVisE.txt', AllVisibleEs, fmt='%f')
 binEs = np.linspace(AllVisibleEs[1]*0.995, AllVisibleEs[1]*1.005, 100)
 Es = plt
 Es.title(r'$\mathrm{Histogram\ of\ E total:}\ \mu=%.3f,\ \sigma=%.3f,\ \delta E/E=%.5f$' %(muEs, sigmaEs, sigmaEs/muEs))
@@ -291,6 +295,7 @@ Es.show()
 # Es.close(fig)
 
 
+np.savetxt('numpy_EvtTotalVisN.txt', AllVisibleNs, fmt='%f')
 binNs = np.linspace(AllVisibleNs[1]*0.95, AllVisibleNs[1]*1.05, 100)
 Ns = plt
 Ns.title(r'$\mathrm{Histogram\ of\ N total:}\ \mu=%.3f,\ \sigma=%.3f,\ \delta N/N=%.5f, F=%.3f$' %(muNs, sigmaNs, sigmaNs/muNs, (sigmaNs*sigmaNs/muNs)))
