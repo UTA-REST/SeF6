@@ -45,14 +45,14 @@ class modeinfo:
         self.ALLaccumulatedE = list()
 
         def echo(self):
-         print "Mode is " + self.name
-         print self.Eloss,self.avgQuanta
+         print ("Mode is " + self.name)
+         print (self.Eloss,self.avgQuanta)
 
          def thisN(self):
-             print self.accumulatedN
+             print (self.accumulatedN)
 
          def thisN(self):
-             print self.accumulatedE
+             print (self.accumulatedE)
 
 
 def define_modes(globalvar):
@@ -132,22 +132,22 @@ def define_modes(globalvar):
         AVGvisN = 0.0
         AVGvisE = 0.0
         for mIdx, m in enumerate(modes):
-            print m.probCutHigh, m.probCutLow
+            print (m.probCutHigh, m.probCutLow)
 
             if mIdx < 12:
                 AVGvisN = AVGvisN + m.avgQuanta
                 AVGvisE = AVGvisE + m.avgEnergy
 
-        print "\n ... \n ... Testing ...\n ... \n"
-        print "Made object with " + str(len(modes)) + " modes...."
+        print ( "\n ... \n ... Testing ...\n ... \n" )
+        print ( "Made object with " + str(len(modes)) + " modes...." )
 
-        print "Made obect: list of modes. 2 Probabilities are calculated"
-        print "Total E = " + str(TOTALavgE_ALL)
-        print "Total N = " + str(TOTALavgN_ALL)
-        print "Total frac N = " + str(TOTALfracN)
+        print ( "Made obect: list of modes. 2 Probabilities are calculated" )
+        print ( "Total E = " + str(TOTALavgE_ALL) )
+        print ( "Total N = " + str(TOTALavgN_ALL) )
+        print ( "Total frac N = " + str(TOTALfracN) )
 
-        print "AVG Visible E fraction is = " + str(AVGvisE/TOTALavgE_ALL)
-        print "AVG Visible N fraction is = " + str(AVGvisN/TOTALavgN_ALL)
+        print ( "AVG Visible E fraction is = " + str(AVGvisE/TOTALavgE_ALL) )
+        print ( "AVG Visible N fraction is = " + str(AVGvisN/TOTALavgN_ALL) )
 
 
     return modes
@@ -166,6 +166,7 @@ for j in range (1,Nevents):
 
     prob = np.random.random()
     probdist.append(prob)
+
 
 
 print "Making " + str(Nevents) + "events..."

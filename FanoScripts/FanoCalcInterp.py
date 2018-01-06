@@ -30,7 +30,7 @@ print ("imported modules..")
 FileName = "SF6Modes.csv"
 
 # H does not run in local dir kernel, so check for that.
-FilePath = "../FanoData/"
+FilePath = "FanoData/"
 if os.path.isfile(FilePath+FileName):
     print (" yay! ")
 else :
