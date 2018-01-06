@@ -28,13 +28,7 @@ print ("imported modules..")
 # Check file path  # <codecell>
 #
 FileName = "SF6Modes.csv"
-
-# H does not run in local dir kernel, so check for that.
 FilePath = "FanoData/"
-if os.path.isfile(FilePath+FileName):
-    print (" yay! ")
-else :
-    FilePath = "/Users/ferpsihas/Documents/NEXT/SeF6/FanoData/"
 
 # Load file # <codecell>
 #
