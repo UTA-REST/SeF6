@@ -29,6 +29,7 @@ from scipy import stats
 def CDFPoisson(C,mu):
     return spec.gammainc(C+1,mu)
 
+
 def C3Sig(B,sigthresh=0.9974):
     if(B>0.0027):
         ToSolve=lambda x:CDFPoisson(x,B)-((1.-sigthresh))
@@ -56,8 +57,20 @@ def EfficInROIOpt(b):
     roiedge=ROIOpt(b)/2.
     return 1.-spec.erfc(2.35*roiedge/(numpy.sqrt(2.)))
 
-# <codecell>
 # Check em out
+# <codecell>
+pylab.plot(vars,CDFPoisson(vars,6))
+
+# <codecell>
+
+vars=numpy.arange(0,10,0.01)
+Mean=3
+pylab.plot(vars,stats.poisson.cdf(vars,Mean))
+pylab.plot(vars,1.-CDFPoisson(vars,Mean))
+pylab.xlim(0,10)
+pylab.show()
+
+# <codecell>
 vars=numpy.logspace(-4,2,30)
 c3s=[]
 for v in vars:
@@ -99,23 +112,25 @@ pylab.figure(figsize=(4.5,4.5))
 Bs=[0.10,0.14,0.35]
 Labels=["0.4% [$\sim$Intrinsic]","0.7% [$\sim$HPGXe]","2.0% [Pessimistic]"]
 
-# TODO Fix these
-# for bi in range(0,len(Bs)):
-#     b=Bs[bi]
-#     sens=[]
-#     for v in vars:
-#         sens.append(T(1.,v*EfficInROIOpt(b),196,b*ROIOpt(b)))
-#     pylab.plot(vars,sens,label=Labels[bi],color=cols[bi],linewidth=2)
-#
-# pylab.legend(loc='upper left',fontsize=11,title='Res (FWHM / E)',fancybox=True)
-# pylab.xlabel("Exposure / ton yr")
-# pylab.ylabel(r"3$\sigma$ Discovery Potential")
-# pylab.xlim(-0.5,20)
-# pylab.ylim(0,8e27)
-# pylab.grid(which='both')
-# pylab.savefig("DiscoveryPotentialSeF6.png",dpi=200)
+# Show discovery potential vs kg*yr  (I assumed this means at 3 sigma)
+for bi in range(0,len(Bs)):
+    b=Bs[bi]
+    sens=[]
+    for v in vars:
+        sens.append(T3sig(1.,v*EfficInROIOpt(b),196,b*ROIOpt(b)))
+    pylab.plot(vars,sens,label=Labels[bi],color=cols[bi],linewidth=2)
+
+pylab.legend(loc='upper left',fontsize=11,title='Res (FWHM / E)',fancybox=True)
+pylab.xlabel("Exposure / ton yr")
+pylab.ylabel(r"3$\sigma$ Discovery Potential")
+pylab.xlim(-0.5,20)
+pylab.ylim(0,8e27)
+pylab.grid(which='both')
+pylab.savefig("DiscoveryPotentialSeF6.png",dpi=200)
+
 
 # <codecell>
+# Show sensitivity and discovery potential vs kg*yr
 
 vars=numpy.logspace(-2,1.5,100)
 pylab.figure(figsize=(4.5,4.5))
@@ -151,58 +166,44 @@ pylab.savefig("SensAndDiscoveryPotentialSeF6.png",dpi=200)
 
 # <codecell>
 
-# TODO fix
-# vars=numpy.logspace(-2,1.5,100)
-# pylab.figure(figsize=(4.5,4.5))
-# Bs=[0.10,0.14,0.35]
-# Labels=["0.4% [$\sim$Intrinsic]","0.7% [$\sim$HPGXe]","2.0% [Pessimistic]"]
-# for bi in range(0,len(Bs)):
-#     b=Bs[bi]
-#     sens=[]
-#     for v in vars:
-#         sens.append(T(1.,v*EfficInROIOpt(b),196,b*ROIOpt(b)))
-#     pylab.loglog(vars,sens,label=Labels[bi])
-# sens=[]
-# for v in vars:
-#     sens.append(T(1.,v,196,0.000001))
-# pylab.plot(vars,sens,'--',label="Background free")
-# pylab.legend(loc='upper left',fontsize=11,title='Res (FWHM / E)',fancybox=True)
-# pylab.xlabel("Exposure / ton yr")
-# pylab.ylabel(r"3$\sigma$ Discovery Potential")
-# #pylab.xlim(-0.5,20)
-# #pylab.ylim(0,8e27)
-# pylab.grid(which='both')
-#
-# <codecell>
+vars=numpy.logspace(-2,1.5,100)
+pylab.figure(figsize=(4.5,4.5))
+Bs=[0.10,0.14,0.35]
+Labels=["0.4% [$\sim$Intrinsic]","0.7% [$\sim$HPGXe]","2.0% [Pessimistic]"]
+for bi in range(0,len(Bs)):
+    b=Bs[bi]
+    sens=[]
+    for v in vars:
+        sens.append(T3sig(1.,v*EfficInROIOpt(b),196,b*ROIOpt(b)))
+    pylab.loglog(vars,sens,label=Labels[bi])
+sens=[]
+for v in vars:
+    sens.append(T(1.,v,196,0.000001))
+pylab.plot(vars,sens,'--',label="Background free")
+pylab.legend(loc='upper left',fontsize=11,title='Res (FWHM / E)',fancybox=True)
+pylab.xlabel("Exposure / ton yr")
+pylab.ylabel(r"3$\sigma$ Discovery Potential")
+#pylab.xlim(-0.5,20)
+#pylab.ylim(0,8e27)
+pylab.grid(which='both')
 
-vars=numpy.arange(0,10,0.01)
-Mean=3
-pylab.plot(vars,stats.poisson.cdf(vars,Mean))
-pylab.plot(vars,1.-CDFPoisson(vars,Mean))
-pylab.xlim(0,10)
-pylab.show()
-
-# <codecell>
-
-pylab.plot(vars,CDFPoisson(vars,6))
 
 
 # <codecell>
-# TODO fix
-# vars=numpy.logspace(-2,1.5,100)
-# pylab.figure(figsize=(4.5,4.5))
-# Bs=[0.1,1,5,10]
-# Labels=[0.1,1,5,10]
-# for bi in range(0,len(Bs)):
-#     b=Bs[bi]
-#     sens=[]
-#     for v in vars:
-#         sens.append(T(1.,v*EfficInROIOpt(b),136,b*ROIOpt(b)))
-#     pylab.plot(vars,sens,label=Labels[bi])
-#
-# pylab.legend(loc='upper left',fontsize=11,title='Res (FWHM / E)',fancybox=True)
-# pylab.xlabel("Exposure / ton yr")
-# pylab.ylabel(r"3$\sigma$ Discovery Potential")
-# pylab.xlim(-0.5,20)
-# pylab.ylim(0,8e27)
-# pylab.grid(which='both')
+vars=numpy.logspace(-2,1.5,100)
+pylab.figure(figsize=(4.5,4.5))
+Bs=[0.1,1,5,10]
+Labels=[0.1,1,5,10]
+for bi in range(0,len(Bs)):
+    b=Bs[bi]
+    sens=[]
+    for v in vars:
+        sens.append(T(1.,v*EfficInROIOpt(b),136,b*ROIOpt(b)))
+    pylab.plot(vars,sens,label=Labels[bi])
+
+pylab.legend(loc='upper left',fontsize=11,title='Res (FWHM / E)',fancybox=True)
+pylab.xlabel("Exposure / ton yr")
+pylab.ylabel(r"3$\sigma$ Discovery Potential")
+pylab.xlim(-0.5,20)
+pylab.ylim(0,8e27)
+pylab.grid(which='both')
