@@ -58,8 +58,6 @@ def EfficInROIOpt(b):
     return 1.-spec.erfc(2.35*roiedge/(numpy.sqrt(2.)))
 
 # Check em out
-# <codecell>
-pylab.plot(vars,CDFPoisson(vars,6))
 
 # <codecell>
 
@@ -69,6 +67,9 @@ pylab.plot(vars,stats.poisson.cdf(vars,Mean))
 pylab.plot(vars,1.-CDFPoisson(vars,Mean))
 pylab.xlim(0,10)
 pylab.show()
+
+# <codecell>
+pylab.plot(vars,CDFPoisson(vars,6))
 
 # <codecell>
 vars=numpy.logspace(-4,2,30)
@@ -130,6 +131,7 @@ pylab.savefig("DiscoveryPotentialSeF6.png",dpi=200)
 
 
 # <codecell>
+
 # Show sensitivity and discovery potential vs kg*yr
 
 vars=numpy.logspace(-2,1.5,100)
@@ -178,7 +180,7 @@ for bi in range(0,len(Bs)):
     pylab.loglog(vars,sens,label=Labels[bi])
 sens=[]
 for v in vars:
-    sens.append(T(1.,v,196,0.000001))
+    sens.append(T3sig(1.,v,196,0.000001))
 pylab.plot(vars,sens,'--',label="Background free")
 pylab.legend(loc='upper left',fontsize=11,title='Res (FWHM / E)',fancybox=True)
 pylab.xlabel("Exposure / ton yr")
@@ -198,7 +200,7 @@ for bi in range(0,len(Bs)):
     b=Bs[bi]
     sens=[]
     for v in vars:
-        sens.append(T(1.,v*EfficInROIOpt(b),136,b*ROIOpt(b)))
+        sens.append(T3sig(1.,v*EfficInROIOpt(b),136,b*ROIOpt(b)))
     pylab.plot(vars,sens,label=Labels[bi])
 
 pylab.legend(loc='upper left',fontsize=11,title='Res (FWHM / E)',fancybox=True)
