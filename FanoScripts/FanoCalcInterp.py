@@ -27,7 +27,7 @@ print ("imported modules..")
 
 # Check file path  # <codecell>
 #
-FileName = "SF6Modes.csv"
+FileName = "SF6Modes_100keV.csv"
 FilePath = "FanoData/"
 
 # Load file # <codecell>
@@ -69,8 +69,9 @@ pylab.ylabel("Cumulative sum P")
 # TODO move these vars upstairs
 EnergyToSpend=3e6
 EThresh=15
+FractionToSpend=0.845
 
-ELeft=EnergyToSpend
+ELeft=EnergyToSpend*FractionToSpend
 ExcitationsSpent=numpy.zeros_like(Ns)
 
 count=0
@@ -106,15 +107,16 @@ pylab.show()
 # Generate many low energy events to study event-to-event fluctuations
 # <codecell>
 
-NEvents=100
-EventEnergy=100000
-VisibleEnergy=[]
-VisibleQuanta=[]
+NEvents        = 10000
+EventEnergy    = 100000
+EnergyToAssign = EventEnergy*FractionToSpend
+VisibleEnergy  = []
+VisibleQuanta  = []
 
 
 for i in range(0,NEvents):
     ExcitationsSpent=numpy.zeros_like(Ns)
-    ELeft=EventEnergy
+    ELeft=EnergyToAssign
     while((ELeft>EThresh)):
         ModeNum=int(LookupFunction(numpy.random.rand()))
         ELeft=ELeft-Es[ModeNum]
