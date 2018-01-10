@@ -35,10 +35,12 @@ FilePath = "FanoData/"
 Data=numpy.loadtxt(FilePath+FileName,delimiter=',')
 # Energy per mode
 Es=Data[:,0]
-# Relative prob per mode
+# Avg Quanta (used for relative prob per mode)
 Ns=Data[:,1]
 # Is it observable energy?
 IsObs=Data[:,2]
+# Missing Quanta
+MissQ=Data[:,3]
 
 # List of mode number indices # <codecell>
 #
@@ -49,7 +51,6 @@ ModeNums=numpy.arange(0,len(Ns))
 NormNs=Ns/sum(Ns)
 CumtvN=numpy.concatenate([[0],numpy.cumsum(NormNs)])
 LookupFunction=interp.interp1d(CumtvN,ModeNumsPrime,kind='linear')
-
 
 # Plot cumulative distribution # <codecell>
 #
@@ -69,7 +70,7 @@ pylab.ylabel("Cumulative sum P")
 # TODO move these vars upstairs
 EnergyToSpend=3e6
 EThresh=15
-FractionToSpend=0.845
+FractionToSpend=1.0
 
 ELeft=EnergyToSpend*FractionToSpend
 ExcitationsSpent=numpy.zeros_like(Ns)
@@ -133,20 +134,57 @@ pylab.hist(VisibleQuanta)
 # <codecell>
 pylab.hist(VisibleEnergy)
 
-# Calculate resolution
+# Calculate resolution & Fano factor
 # <codecell>
+print ("\n>>\n>> For ", NEvents, " events, allocating ",FractionToSpend , "\n>>")
+print ("Avg E = ",numpy.average(VisibleEnergy),"  +- ",numpy.std(VisibleEnergy))
 ResE=numpy.std(VisibleEnergy)/numpy.average(VisibleEnergy)
 print("Resn on visible energy",ResE)
 
+print ("Avg Q = ",numpy.average(VisibleQuanta),"  +- ",numpy.std(VisibleQuanta))
 ResQ=numpy.std(VisibleQuanta)/numpy.average(VisibleQuanta)
 print("Resn on quanta",ResQ)
 
 binomial=1./numpy.sqrt(numpy.average(VisibleQuanta))
 print("Resn on quanta from binomial",binomial)
 
-# <codecell>
 F1=ResQ/binomial
 F2=ResE/binomial
 
 print("Quanta Fano", F1**2)
 print("Energy Fano", F2**2)
+
+
+# Calculate resolution by adding missing quanta (P)
+#
+# From degrad output:
+#-----------------------------------------------------------------------------
+# NUMBER OF ION PAIRS PER EVENT =   3112.6930 +-   0.7890
+#-----------------------------------------------------------------------------
+#     COLLISIONS PER DELTA SORTED ACCORDING TO GAS AND TYPE OF COLLISION
+#   GASES USED                ELASTIC    SUPERELAS   INELASTIC  ATTACHMENT  IONISATION
+#  SF6 2014  ANISOTROPIC      25783.05        9.84     2272.94        0.00     2982.17
+#-----------------------------------------------------------------------------
+# So our quanta (N) should be around 2982.17 and missing around 130 (P)
+#
+# <codecell>
+
+VisibleQuanta=numpy.array(VisibleQuanta)+P
+print ("\n >>\n >> Added P=130 to the total N on each trial \n>>")
+
+print("Debug: N trials in array where N = ",len(VisibleQuanta))
+print(VisibleQuanta)
+
+# <codecell>
+# Calculate resolution and Fano factor
+ResNP=numpy.std(VisibleQuanta)/(numpy.average(VisibleQuanta))
+print("Resn on quanta N + P",ResNP)
+
+binomialNP=1./numpy.sqrt(numpy.average(VisibleQuanta))
+print("Resn on N + P from binomial",binomialNP)
+
+F1NP=ResNP/binomialNP
+F2NP=ResE/binomialNP
+
+print("Quanta Fano N + P ", F1NP**2)
+print("Energy Fano (with binomial +P)", F2NP**2)
