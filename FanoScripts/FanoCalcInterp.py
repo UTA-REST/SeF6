@@ -41,6 +41,10 @@ Ns=Data[:,1]
 IsObs=Data[:,2]
 # Missing Quanta
 MissQ=Data[:,3]
+# Fixed # Quanta to add
+XTRAs=Data[:,4]
+# Mode names
+NAMEs=Data[:,5]
 
 # List of mode number indices # <codecell>
 #
@@ -151,8 +155,8 @@ for i in range(0,NEvents):
 
         ModeNum=int(LookupFunction(numpy.random.rand()))
         ELeft=ELeft-Es[ModeNum]
-        ExcitationsSpent[ModeNum]+=1
-        AddedQuantaSpent[ModeNum]+=(1+PsToAdd[ModeNum])
+        ExcitationsSpent[ModeNum]+=( 1+XTRAs[ModeNum] )
+        AddedQuantaSpent[ModeNum]+=(1+XTRAs[ModeNum]+PsToAdd[ModeNum])
 
     VisibleEnergy.append(sum(ExcitationsSpent*IsObs*Es))
     VisibleQuanta.append(sum(ExcitationsSpent*IsObs))
