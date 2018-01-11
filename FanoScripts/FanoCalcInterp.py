@@ -24,11 +24,14 @@ print ("imported modules..")
 #.........................
 # Load data
 #.........................
-
 # Check file path  # <codecell>
 #
-FileName = "SF6Modes_100keV_B.csv"
+ApproxMessyStates=0
+
 FilePath = "FanoData/"
+FileName = "SF6Modes_100keV_B.csv"
+if ApproxMessyStates > 0:
+    FileName = "SF6Modes_100keV_A.csv"
 
 # Load file # <codecell>
 #
@@ -66,9 +69,10 @@ pylab.ylabel("Cumulative sum P")
 
 
 
- # <codecell>
+# <codecell>
 #............................................
-# Approximation A: Re-assign missing quanta
+# Approx A never worked but I kept it as a
+# side calculation.
 #............................................
 AvgMissingQuanta=130 # From degrad output
 
@@ -76,12 +80,9 @@ NinKshells=Ns*MissQ
 EinKshells=Ns*Es*MissQ
 EinKshells = EinKshells/(sum(EinKshells))
 
-print (">>\n Adding ",AvgMissingQuanta," missing quanta with probability: ")
-print (EinKshells)
-print("\n or ",AvgMissingQuanta/sum(NinKshells), " quanta per kshell N")
-
-# Distribute Ps according to energy
-#PsToAddV1=EinKshells*AvgMissingQuanta
+print (">>\n Adding ",AvgMissingQuanta," for side calculation. Main calculation not affected ")
+# print (EinKshells)
+# print("\n or ",AvgMissingQuanta/sum(NinKshells), " quanta per kshell N")
 
 # Weight by N in each mode
 PsToAdd=EinKshells*(AvgMissingQuanta/sum(NinKshells))
@@ -107,12 +108,14 @@ AddedQuantaSpent=numpy.zeros_like(Ns)
 count=0
 MaxCount=1e9
 while((ELeft>EThresh) and (count<MaxCount)):
+
     count=count+1
     ModeNum=int(LookupFunction(numpy.random.rand()))
     EThisMode=Es[ModeNum]
-    # # Approximation C: Messy states only cost 15.wtv eV
-    # if MissQ[ModeNum] > 0:
-    #      EThisMode=EOneQ
+
+    if ( ApproxMessyStates > 0 ) && ( MissQ[ModeNum] > 0 ):
+         EThisMode=EOneQ
+
     ELeft=ELeft-EThisMode
     ExcitationsSpent[ModeNum]+=1
     AddedQuantaSpent[ModeNum]+=PsToAdd[ModeNum]
@@ -143,7 +146,7 @@ pylab.show()
 # Generate many low energy events to study event-to-event fluctuations
 # <codecell>
 
-NEvents        = 1000
+NEvents        = 50000
 EventEnergy    = 100000
 EnergyToAssign = EventEnergy*FractionToSpend
 VisibleEnergy  = []
@@ -159,9 +162,8 @@ for i in range(0,NEvents):
 
         ModeNum=int(LookupFunction(numpy.random.rand()))
         EThisMode=Es[ModeNum]
-        # # Approximation C: Messy states only cost 15.wtv eV
-        # if MissQ[ModeNum] > 0:
-        #     EThisMode=EOneQ
+        if ( ApproxMessyStates > 0 ) && ( MissQ[ModeNum] > 0 ):
+            EThisMode=EOneQ
 
         ELeft=ELeft-EThisMode
         ExcitationsSpent[ModeNum]+=( 1+XTRAs[ModeNum] )
@@ -171,19 +173,19 @@ for i in range(0,NEvents):
     VisibleQuanta.append(sum(ExcitationsSpent*IsObs))
     VisibleQuantaCorr.append(sum(AddedQuantaSpent*IsObs))
 
-    if(i%10==0):
+    if( i%10 == 0 ):
         print(i,)
         #TODO add progress bar
 
 print("N_evt = ",VisibleQuanta)
-print("N_evt +p2= ",VisibleQuantaCorr)
+# print("N_evt +p2= ",VisibleQuantaCorr)
 
 # Print plots for Visible N and Visible E #TODO legends
 
 # <codecell>
 pylab.hist(VisibleQuanta)
-# <codecell>
-pylab.hist(VisibleQuantaCorr)
+#<codecell>
+# pylab.hist(VisibleQuantaCorr)
 # <codecell>
 pylab.hist(VisibleEnergy)
 
@@ -207,50 +209,3 @@ F2=ResE/binomial
 
 print("Quanta Fano", F1**2)
 print("Energy Fano", F2**2)
-
-# Calculate resolution & Fano factor
-#............................................
-# Approximation A: Re-assign missing quanta
-#............................................
-# <codecell>
-# Calculate resolution & Fano factor
-print(">>\n Corrected P for Kshell modes \n")
-print ("Avg N+P = ",numpy.average(VisibleQuantaCorr),"  +- ",numpy.std(VisibleQuantaCorr))
-ResQC=numpy.std(VisibleQuantaCorr)/numpy.average(VisibleQuantaCorr)
-print("Resn on quanta + P",ResQC)
-
-binomialP=1./numpy.sqrt(numpy.average(VisibleQuantaCorr))
-print("Resn on quanta from binomial",binomialP)
-
-F0P=ResQ/binomialP
-F1P=ResQC/binomialP
-F2P=ResE/binomialP
-
-print("Quanta Fano w/P", F0P**2)
-print("Quanta Fano w/P", F1P**2)
-print("Energy Fano w/P", F2P**2)
-
-
-# Calculate resolution by adding missing quanta (P)
-# # <codecell>
-
-VisibleQuanta=numpy.array(VisibleQuanta)+AddedQuantaSpent
-print ("\n >>\n >> How much comes from increasing N only? \n>>")
-print ("\n >>\n >> Added P=130 to the total N on each trial \n>>")
-
-print("Debug: N trials in array where N = ",len(VisibleQuanta))
-print(VisibleQuanta)
-
-# <codecell>
-# Calculate resolution and Fano factor
-ResNP=numpy.std(VisibleQuanta)/(numpy.average(VisibleQuanta))
-print("Resn on quanta N + P",ResNP)
-
-binomialNP=1./numpy.sqrt(numpy.average(VisibleQuanta))
-print("Resn on N + P from binomial",binomialNP)
-
-F1NP=ResNP/binomialNP
-F2NP=ResE/binomialNP
-
-print("Quanta Fano N + P ", F1NP**2)
-print("Energy Fano (with binomial +P)", F2NP**2)
